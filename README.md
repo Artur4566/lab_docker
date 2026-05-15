@@ -14,6 +14,8 @@ mkdir build && cd build
 cmake .. -DBUILD_TESTS=ON
 cmake --build .
 ctest
-Repository
+\`\`\`
+
+## Repository
 
 https://github.com/Artur4566/lab05
