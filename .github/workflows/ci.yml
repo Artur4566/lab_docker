@@ -5,13 +5,20 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
     - name: Install dependencies
       run: sudo apt install -y cmake g++
+
     - name: Configure
       run: cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-Wno-error"
+
     - name: Build
       run: cmake --build _build
+
     - name: Test
       run: ctest --test-dir _build --output-on-failure
