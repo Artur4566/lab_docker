@@ -1,7 +1,9 @@
 _build/
 build/
+banking/_build/
 *.o
 *.a
+*.so
 *.exe
 .vscode/
 .idea/
