@@ -1,25 +1,21 @@
-# Лабораторная работа №3
-## CMake
+# Лабораторная работа №4
+## CI/CD
 
 **Автор:** Кешишоглян Артур
 
+## CI/CD Status
+
+[![CI](https://github.com/Artur4566/lab04/actions/workflows/ci.yml/badge.svg)](https://github.com/Artur4566/lab04/actions/workflows/ci.yml)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/Artur4566/lab04?svg=true)](https://ci.appveyor.com/project/Artur4566/lab04)
+
 ## Сборка
 
+```bash
 mkdir build && cd build
 cmake ..
 cmake --build .
+\`\`\`
 
-## Запуск
+## Repository
 
-./example1
-./example2
-./hello_world_application
-./solver_application 1 0 -4 0.001
-
-## Структура
-
-- formatter_lib/
-- formatter_ex_lib/
-- solver_lib/
-- hello_world_application/
-- solver_application/
+https://github.com/Artur4566/lab04
