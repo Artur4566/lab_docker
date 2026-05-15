@@ -1,0 +1,37 @@
+name: Coveralls
+
+on: [push, pull_request]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: sudo apt install -y cmake g++ lcov
+
+    - name: Configure with coverage
+      run: cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="--coverage -Wno-error"
+
+    - name: Build and run tests
+      run: |
+        cmake --build _build
+        cd _build
+        ./banking_check
+        cd ..
+
+    - name: Collect coverage data
+      run: |
+        lcov --capture --directory . --output-file coverage.info --no-external --ignore-errors mismatch
+        lcov --remove coverage.info '*/_build/*' '*/tests/*' '*/usr/*' '*/third-party/*' --output-file coverage.info --ignore-errors mismatch
+        lcov --list coverage.info
+
+    - name: Upload to Coveralls
+      uses: coverallsapp/github-action@v2
+      with:
+        file: coverage.info
+        github-token: ${{ secrets.GITHUB_TOKEN }}
