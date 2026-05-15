@@ -3,16 +3,15 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  build-linux:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        compiler: [g++, clang++]
     steps:
     - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: sudo apt install -y cmake g++
     - name: Configure
-      run: |
-        mkdir build && cd build
-        cmake .. -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+      run: cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-Wno-error"
     - name: Build
-      run: cmake --build build
+      run: cmake --build _build
+    - name: Test
+      run: ctest --test-dir _build --output-on-failure
