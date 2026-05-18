@@ -1,17 +1,10 @@
-# Laboratory work 6: CPack
+# Laboratory work: Docker
 
 ## Author
 Artur
 
-## CI/CD Status
-- GitHub Actions: ✅ Passing
-
-## Build and Package
-mkdir build && cd build
-cmake .. -DBUILD_TESTS=ON
-cmake --build .
-ctest
-cpack -G "TGZ;DEB;RPM"
+## Files
+Dockerfile, docker-compose.yml, main.py, requirements.txt, app/, db/
 
 ## Repository
-https://github.com/Artur4566/lab06
+https://github.com/Artur4566/lab_docker
