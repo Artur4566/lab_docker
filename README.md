@@ -1,21 +1,17 @@
-# Лабораторная работа №5
-## Google Test
+# Laboratory work 6: CPack
 
-**Автор:** Кешишоглян Артур
+## Author
+Artur
 
 ## CI/CD Status
+- GitHub Actions: ✅ Passing
 
-[![CI](https://github.com/Artur4566/lab05/actions/workflows/ci.yml/badge.svg)](https://github.com/Artur4566/lab05/actions/workflows/ci.yml)
-
-## Сборка и тесты
-
-```bash
+## Build and Package
 mkdir build && cd build
 cmake .. -DBUILD_TESTS=ON
 cmake --build .
 ctest
-\`\`\`
+cpack -G "TGZ;DEB;RPM"
 
 ## Repository
-
-https://github.com/Artur4566/lab05
+https://github.com/Artur4566/lab06

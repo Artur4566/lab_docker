@@ -1,9 +1,13 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -12,13 +16,15 @@ jobs:
         submodules: recursive
 
     - name: Install dependencies
-      run: sudo apt install -y cmake g++
+      run: |
+        sudo apt update
+        sudo apt install -y cmake g++
 
     - name: Configure
-      run: cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-Wno-error"
+      run: cmake -H. -B_build -DBUILD_TESTS=ON
 
     - name: Build
       run: cmake --build _build
 
-    - name: Test
+    - name: Run tests
       run: ctest --test-dir _build --output-on-failure

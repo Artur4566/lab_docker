@@ -1,0 +1,92 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y rpm tree
+      - name: Configure
+        run: cmake -S . -B _build
+      - name: Build
+        run: cmake --build _build
+      - name: Run tests
+        run: cd _build && ctest --output-on-failure
+      - name: Build packages
+        run: cd _build && cpack -G "TGZ;DEB;RPM"
+      - name: Collect artifacts
+        run: mkdir -p artifacts && mv _build/*.tar.gz _build/*.deb _build/*.rpm artifacts/ 2>/dev/null || true
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-packages
+          path: artifacts/
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Configure
+        run: cmake -S . -B _build
+      - name: Build
+        run: cmake --build _build
+      - name: Build DMG
+        run: cd _build && cpack -G "DragNDrop"
+      - name: Collect artifacts
+        run: mkdir -p artifacts && mv _build/*.dmg artifacts/ 2>/dev/null || true
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-packages
+          path: artifacts/
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Configure
+        run: cmake -S . -B _build
+      - name: Build
+        run: cmake --build _build --config Release
+      - name: Build WIX
+        run: cd _build && cpack -G "WIX" -C Release
+      - name: Collect artifacts
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts
+          Move-Item -Path _build/*.msi -Destination artifacts/ -ErrorAction SilentlyContinue
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-packages
+          path: artifacts/
+
+  release:
+    needs: [linux, macos, windows]
+    if: success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Show artifacts
+        run: ls -R artifacts
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
